@@ -6,8 +6,17 @@ import { Filter } from './Filter/Filter';
 const LS_KEY = 'saved_contacts';
 
 export const App = () => {
-  const [contacts, setContacts] = useState([]);
+  const [contacts, setContacts] = useState(() => {
+    if (localStorage.getItem(LS_KEY)) {
+      return JSON.parse(localStorage.getItem(LS_KEY));
+    }
+    return [];
+  });
   const [filter, setFilter] = useState('');
+
+  useEffect(() => {
+    localStorage.setItem(LS_KEY, JSON.stringify(contacts));
+  }, [contacts]);
 
   const addContact = contact => {
     const alreadyIn = contacts.find(
@@ -18,27 +27,19 @@ export const App = () => {
       alert(`${contact.name} is already in contacts`);
       return;
     }
-    setContacts([...contacts, contact]);
+    setContacts(prevState => [...prevState, contact]);
   };
   const removeContact = id => {
-    setContacts(contacts.filter(contact => contact.id !== id));
+    setContacts(prevState => prevState.filter(contact => contact.id !== id));
   };
   const handleFilterState = evt => {
     setFilter(evt.target.value);
   };
-  const filteredContacts = ( contacts, filter ) => {
+  const filteredContacts = (contacts, filter) => {
     return contacts.filter(({ name }) =>
       name.toLowerCase().includes(filter.toLowerCase())
     );
   };
-  useEffect(() => {
-    if (localStorage.getItem(LS_KEY)) {
-      setContacts(JSON.parse(localStorage.getItem(LS_KEY)));
-    }
-  }, []);
-  useEffect(()=>{
-    localStorage.setItem(LS_KEY, JSON.stringify(contacts))
-  },[contacts])
 
   return (
     <div
