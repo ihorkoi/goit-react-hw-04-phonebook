@@ -6,12 +6,9 @@ import { Filter } from './Filter/Filter';
 const LS_KEY = 'saved_contacts';
 
 export const App = () => {
-  const [contacts, setContacts] = useState(() => {
-    if (localStorage.getItem(LS_KEY)) {
-      return JSON.parse(localStorage.getItem(LS_KEY));
-    }
-    return [];
-  });
+  const [contacts, setContacts] = useState(
+    () => JSON.parse(localStorage.getItem(LS_KEY)) || []
+  );
   const [filter, setFilter] = useState('');
 
   useEffect(() => {
